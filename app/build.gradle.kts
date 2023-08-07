@@ -11,6 +11,7 @@ android {
 
     buildFeatures{
         dataBinding = true
+        viewBinding = true
     }
 
     defaultConfig {
@@ -71,6 +72,9 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.8.1")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
+
+    implementation("androidx.navigation:navigation-fragment-ktx:2.6.0")
+    implementation("androidx.navigation:navigation-ui-ktx:2.6.0")
 
     implementation ("com.airbnb.android:lottie:6.1.0")
 

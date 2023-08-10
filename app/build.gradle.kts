@@ -3,6 +3,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
     id("org.jetbrains.kotlin.kapt")
+    id("kotlin-parcelize")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -12,6 +14,7 @@ android {
     buildFeatures{
         dataBinding = true
         viewBinding = true
+        buildConfig = true
     }
 
     defaultConfig {
@@ -31,6 +34,16 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "GITHUB_API_BASE_URL", "\"https://api.github.com/\"")
+        }
+
+        debug {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            buildConfigField("String", "GITHUB_API_BASE_URL", "\"https://api.github.com/\"")
         }
     }
     compileOptions {

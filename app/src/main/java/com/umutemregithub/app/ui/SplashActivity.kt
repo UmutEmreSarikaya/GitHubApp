@@ -3,20 +3,27 @@ package com.umutemregithub.app.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import androidx.lifecycle.lifecycleScope
 import com.umutemregithub.app.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        supportActionBar?.hide()
-        Handler(Looper.myLooper()!!).postDelayed({
-            val intent = Intent(this@SplashActivity, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }, 2000)
+        //supportActionBar?.hide()
+
+        lifecycleScope.launch {
+            delay(2000)
+            withContext(Dispatchers.Main){
+                val intent = Intent(this@SplashActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+        }
     }
 }

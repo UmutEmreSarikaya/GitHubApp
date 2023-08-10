@@ -7,12 +7,35 @@
 
     <fragment
         android:id="@+id/search_fragment"
-        android:name="com.umutemregithub.app.ui.fragments.SearchFragment"
+        android:name="com.umutemregithub.app.ui.search.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_search_fragment_to_git_hub_repo_detail_fragment"
+            app:destination="@id/git_hub_repo_detail_fragment" />
+    </fragment>
     <fragment
         android:id="@+id/favorite_fragment"
-        android:name="com.umutemregithub.app.ui.fragments.FavoriteFragment"
+        android:name="com.umutemregithub.app.ui.favorite.FavoriteFragment"
         android:label="fragment_favorite"
-        tools:layout="@layout/fragment_favorite" />
+        tools:layout="@layout/fragment_favorite" >
+        <action
+            android:id="@+id/action_favorite_fragment_to_git_hub_repo_detail_fragment"
+            app:destination="@id/git_hub_repo_detail_fragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/git_hub_repo_detail_fragment"
+        android:name="com.umutemregithub.app.ui.detail.GitHubRepoDetailFragment"
+        android:label="fragment_bottom_sheet"
+        tools:layout="@layout/fragment_git_hub_repo_detail" >
+        <action
+            android:id="@+id/action_bottom_sheet_fragment_to_search_fragment"
+            app:destination="@id/search_fragment" />
+        <action
+            android:id="@+id/action_bottom_sheet_fragment_to_favorite_fragment"
+            app:destination="@id/favorite_fragment" />
+        <argument
+            android:name="gitHubRepo"
+            app:argType="com.umutemregithub.app.models.GitHubRepo"/>
+    </dialog>
 </navigation>

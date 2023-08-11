@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="ModalBottomSheetDialog" parent="Widget.MaterialComponents.BottomSheet.Modal">
-        <item name="backgroundTint">@color/green</item>
         <item name="shapeAppearance">@style/ShapeAppearance.App.LargeComponent</item>
     </style>
 
     <style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">24dp</item>
+        <item name="cornerSize">48dp</item>
+    </style>
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:background">@drawable/search_view_background</item>
+        <item name="android:queryBackground">@android:color/transparent</item>
+        <item name="android:backgroundTint">@color/gray</item>
     </style>
 
 </resources>

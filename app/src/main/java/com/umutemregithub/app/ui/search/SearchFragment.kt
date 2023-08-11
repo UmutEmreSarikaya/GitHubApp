@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -20,8 +21,7 @@ class SearchFragment : Fragment() {
     private lateinit var binding: FragmentSearchBinding
     private val gitHubRepoAdapter = GitHubRepoAdapter()
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)
         return binding.root
@@ -71,8 +71,20 @@ class SearchFragment : Fragment() {
     }
 
     private fun initClickListeners() {
-        binding.btnSearch.setOnClickListener {
-            viewModel.searchUsersRepos(binding.etUsername.text.toString())
-        }
+
+        binding.svUsername.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
+            android.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    viewModel.searchUsersRepos(query)
+                    binding.svUsername.clearFocus()
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                return false
+            }
+        })
     }
 }

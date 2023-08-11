@@ -17,6 +17,9 @@ class FavoriteViewModel @Inject constructor(
     private val _favoriteRepos = MutableSharedFlow<List<GitHubRepo>>(1)
     val favoriteRepos: SharedFlow<List<GitHubRepo>> = _favoriteRepos
 
+    private val _updateRow = MutableSharedFlow<Int>()
+    val updateRow: SharedFlow<Int> = _updateRow
+
     fun getFavoriteRepos() {
         viewModelScope.launch {
             gitHubRepoRepository.getFavoriteRepos().collect {

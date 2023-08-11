@@ -7,4 +7,5 @@
     <string name="search">Search</string>
     <string name="favorites">Favorites</string>
     <string name="open_in_web">Open In Web</string>
+    <string name="user_not_found">User Not Found!</string>
 </resources>

@@ -43,11 +43,6 @@ class SearchFragment : Fragment() {
             }
         }
 
-        /*val model = GitHubRepo().let {
-            it.htmlUrl
-            it
-        }*/
-
         initObserver()
         initClickListener()
     }
@@ -62,9 +57,15 @@ class SearchFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.isRepoNotFound.collect { isRepoNotFound ->
                 if (isRepoNotFound) {
-                    binding.recyclerRepo.visibility = View.GONE
+                    binding.apply {
+                        recyclerRepo.visibility = View.GONE
+                        tvUserNotFound.visibility = View.VISIBLE
+                    }
                 } else {
-                    binding.recyclerRepo.visibility = View.VISIBLE
+                    binding.apply {
+                        recyclerRepo.visibility = View.VISIBLE
+                        tvUserNotFound.visibility = View.GONE
+                    }
                 }
             }
         }

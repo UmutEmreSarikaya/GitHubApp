@@ -23,7 +23,6 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)
         return binding.root
     }
@@ -38,16 +37,16 @@ class SearchFragment : Fragment() {
                 findNavController().navigate(action)
             }
 
-            favoriteButtonClickListener = {
-                viewModel.addRepoAsFavorite(it)
+            favoriteButtonClickListener = { gitHubRepo ->
+                viewModel.addRepoAsFavorite(gitHubRepo)
             }
         }
 
-        initObserver()
-        initClickListener()
+        initObservers()
+        initClickListeners()
     }
 
-    private fun initObserver() {
+    private fun initObservers() {
         lifecycleScope.launch {
             viewModel.repos.collect {
                 gitHubRepoAdapter.submitList(it)
@@ -71,7 +70,7 @@ class SearchFragment : Fragment() {
         }
     }
 
-    private fun initClickListener() {
+    private fun initClickListeners() {
         binding.btnSearch.setOnClickListener {
             viewModel.searchUsersRepos(binding.etUsername.text.toString())
         }

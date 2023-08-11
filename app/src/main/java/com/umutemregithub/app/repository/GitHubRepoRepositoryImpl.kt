@@ -8,8 +8,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GitHubRepoRepositoryImpl @Inject constructor(
-    private val gitHubRepoService: GitHubRepoService,
-    private val gitHubRepoDao: GitHubRepoDao
+    private val gitHubRepoService: GitHubRepoService, private val gitHubRepoDao: GitHubRepoDao
 ) : GitHubRepoRepository {
     override fun getUsersRepos(username: String): Flow<List<GitHubRepo>?> {
         return flow {

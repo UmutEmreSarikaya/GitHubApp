@@ -32,18 +32,22 @@ class FavoriteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initObservers()
+
         binding.recyclerFavorite.adapter = gitHubRepoAdapter.apply {
             itemClickListener = {
                 val action = FavoriteFragmentDirections.actionFavoriteFragmentToGitHubRepoDetailFragment(it)
                 findNavController().navigate(action)
             }
 
-            gitHubRepoAdapter.favoriteButtonClickListener = {
-                viewModel.removeRepoFromFavorite(it)
+            gitHubRepoAdapter.favoriteButtonClickListener = {gitHubRepo ->
+                viewModel.apply {
+                    removeRepoFromFavorite(gitHubRepo)
+                    getFavoriteRepos()
+                }
             }
         }
 
-        initObservers()
         viewModel.getFavoriteRepos()
 
     }

@@ -12,7 +12,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".ui.detail.GitHubRepoDetailFragment">
 
         <TextView
@@ -29,35 +29,44 @@
             android:id="@+id/tv_repo_owner_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_marginStart="20dp"
             android:text="@{gitHubRepo.owner.login}"
             android:textSize="18sp"
-            android:layout_marginTop="5dp"
             app:layout_constraintTop_toBottomOf="@id/tv_repo_name" />
+
+        <View
+            android:id="@+id/divider"
+            android:background="@android:color/darker_gray"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_margin="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_repo_owner_name" />
 
         <TextView
             android:id="@+id/tv_star_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="50dp"
             android:text="@{String.valueOf(gitHubRepo.starsCount)}"
             android:textSize="40sp"
             app:drawableLeftCompat="@drawable/baseline_star_24"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_repo_owner_name" />
+            app:layout_constraintTop_toBottomOf="@+id/divider" />
 
         <TextView
             android:id="@+id/tv_fork_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="30dp"
             android:text="@{String.valueOf(gitHubRepo.forksCount)}"
             android:textSize="40sp"
-            app:drawableLeftCompat="@drawable/baseline_fork_right_24"
+            app:drawableLeftCompat="@drawable/git_fork"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_repo_owner_name" />
+            app:layout_constraintTop_toBottomOf="@+id/divider" />
 
         <Button
             android:id="@+id/btn_open_url"

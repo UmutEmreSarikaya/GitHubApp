@@ -24,10 +24,12 @@ class GitHubRepoAdapter : ListAdapter<GitHubRepo, GitHubRepoAdapter.GitHubRepoLi
             itemClickListener: ((GitHubRepo) -> Unit)?
         ) {
             binding.apply {
+
                 this.gitHubRepo = gitHubRepo
-                cardView.setOnClickListener {
+                itemLayout.setOnClickListener {
                     itemClickListener?.invoke(gitHubRepo)
                 }
+
                 btnFavorite.setOnClickListener {
                     favoriteButtonClickListener?.invoke(gitHubRepo)
                 }

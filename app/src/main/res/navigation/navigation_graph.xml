@@ -26,16 +26,16 @@
     <dialog
         android:id="@+id/git_hub_repo_detail_fragment"
         android:name="com.umutemregithub.app.ui.detail.GitHubRepoDetailFragment"
-        android:label="fragment_bottom_sheet"
+        android:label="fragment_git_hub_repo_detail"
         tools:layout="@layout/fragment_git_hub_repo_detail">
+        <argument
+            android:name="gitHubRepo"
+            app:argType="com.umutemregithub.app.models.GitHubRepo" />
         <action
             android:id="@+id/action_git_hub_repo_detail_fragment_to_search_fragment"
             app:destination="@id/search_fragment" />
         <action
             android:id="@+id/action_git_hub_repo_detail_fragment_to_favorite_fragment"
             app:destination="@id/favorite_fragment" />
-        <argument
-            android:name="gitHubRepo"
-            app:argType="com.umutemregithub.app.models.GitHubRepo" />
     </dialog>
 </navigation>

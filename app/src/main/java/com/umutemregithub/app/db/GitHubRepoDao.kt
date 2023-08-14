@@ -16,4 +16,7 @@ interface GitHubRepoDao {
 
     @Query("SELECT * FROM gitHubRepo")
     suspend fun getAll(): List<GitHubRepo>?
+
+    @Query("SELECT * FROM gitHubRepo WHERE id = :itemId")
+    suspend fun getItemById(itemId: Int?): GitHubRepo?
 }

@@ -21,14 +21,21 @@ class GitHubRepoRepositoryImpl @Inject constructor(
 
     override suspend fun addRepoAsFavorite(gitHubRepo: GitHubRepo) {
         gitHubRepoDao.insert(gitHubRepo)
-
     }
 
     override suspend fun removeRepoFromFavorite(gitHubRepo: GitHubRepo) {
         gitHubRepoDao.delete(gitHubRepo)
     }
 
-    override suspend fun getFavoriteRepos(): Flow<List<GitHubRepo>?> {
+    override suspend fun addOrRemoveRepoFromFavorite(gitHubRepo: GitHubRepo) {
+        if(gitHubRepoDao.getItemById(gitHubRepo.id) != null){
+            gitHubRepoDao.delete(gitHubRepo)
+        } else {
+            gitHubRepoDao.insert(gitHubRepo)
+        }
+    }
+
+    override fun getFavoriteRepos(): Flow<List<GitHubRepo>?> {
         return flow {
             val response = gitHubRepoDao.getAll()
             if (response != null) {

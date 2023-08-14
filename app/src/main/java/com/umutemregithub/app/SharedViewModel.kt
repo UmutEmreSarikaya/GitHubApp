@@ -1,4 +1,4 @@
-package com.umutemregithub.app.ui.search
+package com.umutemregithub.app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,11 +12,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchViewModel @Inject constructor(
+class SharedViewModel @Inject constructor(
     private val gitHubRepoRepository: GitHubRepoRepository
-) : ViewModel() {
-    private val _repos = MutableSharedFlow<List<GitHubRepo>>(1)
-    val repos: SharedFlow<List<GitHubRepo>> = _repos
+): ViewModel() {
+    private val _favoriteRepos = MutableSharedFlow<List<GitHubRepo>>(1)
+    val favoriteRepos: SharedFlow<List<GitHubRepo>> = _favoriteRepos
+
+    private val _searchedRepos = MutableSharedFlow<List<GitHubRepo>>(1)
+    val searchedRepos: SharedFlow<List<GitHubRepo>> = _searchedRepos
 
     private val _isRepoNotFound = MutableSharedFlow<Boolean>(1)
     val isRepoNotFound: SharedFlow<Boolean> = _isRepoNotFound
@@ -27,7 +30,7 @@ class SearchViewModel @Inject constructor(
                 _isRepoNotFound.emit(true)
             }.collect {
                 it?.let {
-                    _repos.emit(it)
+                    _searchedRepos.emit(it)
                     _isRepoNotFound.emit(false)
                 }
             }
@@ -36,6 +39,27 @@ class SearchViewModel @Inject constructor(
     fun addOrRemoveRepoFromFavorite(gitHubRepo: GitHubRepo){
         viewModelScope.launch {
             gitHubRepoRepository.addOrRemoveRepoFromFavorite(gitHubRepo)
+        }
+    }
+
+    fun getFavoriteRepos() {
+        viewModelScope.launch {
+            collectFavoriteRepos()
+        }
+    }
+
+    fun removeRepoFromFavorite(gitHubRepo: GitHubRepo) {
+        viewModelScope.launch {
+            gitHubRepoRepository.removeRepoFromFavorite(gitHubRepo)
+            collectFavoriteRepos()
+        }
+    }
+
+    private suspend fun collectFavoriteRepos(){
+        gitHubRepoRepository.getFavoriteRepos().collect {
+            it?.let {
+                _favoriteRepos.emit(it)
+            }
         }
     }
 }

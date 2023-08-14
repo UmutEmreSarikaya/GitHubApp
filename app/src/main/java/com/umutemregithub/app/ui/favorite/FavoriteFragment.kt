@@ -6,10 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.viewModels
+import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.umutemregithub.app.R
+import com.umutemregithub.app.SharedViewModel
 import com.umutemregithub.app.ui.search.GitHubRepoAdapter
 import com.umutemregithub.app.databinding.FragmentFavoriteBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,7 +18,8 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FavoriteFragment : Fragment() {
-    private val viewModel: FavoriteViewModel by viewModels()
+    //private val viewModel: FavoriteViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by hiltNavGraphViewModels(R.id.navigation_graph)
     private lateinit var binding: FragmentFavoriteBinding
     private val gitHubRepoAdapter = GitHubRepoAdapter()
 
@@ -41,20 +43,23 @@ class FavoriteFragment : Fragment() {
             }
 
             gitHubRepoAdapter.favoriteButtonClickListener = {gitHubRepo ->
-                viewModel.apply {
+                sharedViewModel.apply {
+                //viewModel.apply {
                     removeRepoFromFavorite(gitHubRepo)
-                    getFavoriteRepos()
+                    //getFavoriteRepos()
                 }
             }
         }
 
-        viewModel.getFavoriteRepos()
+        sharedViewModel.getFavoriteRepos()
+        //viewModel.getFavoriteRepos()
 
     }
 
     private fun initObservers(){
         lifecycleScope.launch {
-            viewModel.favoriteRepos.collect {
+            sharedViewModel.favoriteRepos.collect {
+            //viewModel.favoriteRepos.collect {
                 gitHubRepoAdapter.submitList(it)
             }
         }

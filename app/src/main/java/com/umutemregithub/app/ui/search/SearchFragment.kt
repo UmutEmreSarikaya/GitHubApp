@@ -7,17 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.viewModels
+import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.umutemregithub.app.R
+import com.umutemregithub.app.SharedViewModel
 import com.umutemregithub.app.databinding.FragmentSearchBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
-    private val viewModel: SearchViewModel by viewModels()
+    //private val viewModel: SearchViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by hiltNavGraphViewModels(R.id.navigation_graph)
     private lateinit var binding: FragmentSearchBinding
     private val gitHubRepoAdapter = GitHubRepoAdapter()
     override fun onCreateView(
@@ -38,7 +40,8 @@ class SearchFragment : Fragment() {
             }
 
             favoriteButtonClickListener = { gitHubRepo ->
-                viewModel.addRepoAsFavorite(gitHubRepo)
+                //viewModel.addOrRemoveRepoFromFavorite(gitHubRepo)
+                sharedViewModel.addOrRemoveRepoFromFavorite(gitHubRepo)
             }
         }
 
@@ -48,13 +51,15 @@ class SearchFragment : Fragment() {
 
     private fun initObservers() {
         lifecycleScope.launch {
-            viewModel.repos.collect {
+            sharedViewModel.searchedRepos.collect{
+            //viewModel.repos.collect {
                 gitHubRepoAdapter.submitList(it)
             }
         }
 
         lifecycleScope.launch {
-            viewModel.isRepoNotFound.collect { isRepoNotFound ->
+            sharedViewModel.isRepoNotFound.collect { isRepoNotFound ->
+            //viewModel.isRepoNotFound.collect { isRepoNotFound ->
                 if (isRepoNotFound) {
                     binding.apply {
                         recyclerRepo.visibility = View.GONE
@@ -76,7 +81,8 @@ class SearchFragment : Fragment() {
             android.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
-                    viewModel.searchUsersRepos(query)
+                    sharedViewModel.searchUsersRepos(query)
+                    //viewModel.searchUsersRepos(query)
                     binding.svUsername.clearFocus()
                 }
                 return false

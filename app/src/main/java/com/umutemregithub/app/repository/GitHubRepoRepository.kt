@@ -7,5 +7,6 @@ interface GitHubRepoRepository {
     fun getUsersRepos(username: String): Flow<List<GitHubRepo>?>
     suspend fun addRepoAsFavorite(gitHubRepo: GitHubRepo)
     suspend fun removeRepoFromFavorite(gitHubRepo: GitHubRepo)
-    suspend fun getFavoriteRepos(): Flow<List<GitHubRepo>?>
+    suspend fun addOrRemoveRepoFromFavorite(gitHubRepo: GitHubRepo)
+    fun getFavoriteRepos(): Flow<List<GitHubRepo>?>
 }

@@ -1,4 +1,4 @@
-package com.umutemregithub.app.ui.favorite
+package com.umutemregithub.app.ui.home.favorite
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,4 +1,4 @@
-package com.umutemregithub.app.ui.search
+package com.umutemregithub.app.ui.home.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

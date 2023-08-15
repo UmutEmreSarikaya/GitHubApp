@@ -1,4 +1,4 @@
-package com.umutemregithub.app.ui
+package com.umutemregithub.app.ui.home
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

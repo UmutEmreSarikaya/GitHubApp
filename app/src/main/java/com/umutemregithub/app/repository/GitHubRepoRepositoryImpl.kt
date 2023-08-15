@@ -12,8 +12,13 @@ class GitHubRepoRepositoryImpl @Inject constructor(
 ) : GitHubRepoRepository {
     override fun getUsersRepos(username: String): Flow<List<GitHubRepo>?> {
         return flow {
+            val favoriteRepos = gitHubRepoDao.getAll()
             val response = gitHubRepoService.getUsersRepos(username)
             if (response != null) {
+                response.forEach{ repo ->
+                    val result = favoriteRepos?.contains(repo)
+                    repo.isFavorite = result
+                }
                 emit(response)
             }
         }
@@ -27,11 +32,15 @@ class GitHubRepoRepositoryImpl @Inject constructor(
         gitHubRepoDao.delete(gitHubRepo)
     }
 
-    override suspend fun addOrRemoveRepoFromFavorite(gitHubRepo: GitHubRepo) {
-        if(gitHubRepoDao.getItemById(gitHubRepo.id) != null){
-            gitHubRepoDao.delete(gitHubRepo)
-        } else {
-            gitHubRepoDao.insert(gitHubRepo)
+    override suspend fun addOrRemoveRepoFromFavorite(gitHubRepo: GitHubRepo): Flow<Boolean> {
+        return flow {
+            if(gitHubRepoDao.getItemById(gitHubRepo.id) != null){
+                emit(false)
+                gitHubRepoDao.delete(gitHubRepo)
+            } else {
+                emit(true)
+                gitHubRepoDao.insert(gitHubRepo.apply { isFavorite = true })
+            }
         }
     }
 

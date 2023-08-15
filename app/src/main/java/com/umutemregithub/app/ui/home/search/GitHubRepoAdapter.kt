@@ -1,4 +1,4 @@
-package com.umutemregithub.app.ui.search
+package com.umutemregithub.app.ui.home.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,7 +12,7 @@ class GitHubRepoAdapter : ListAdapter<GitHubRepo, GitHubRepoAdapter.GitHubRepoLi
     CharacterDiffCallback
 ) {
     private lateinit var binding: ItemGitHubRepoBinding
-    var favoriteButtonClickListener: ((GitHubRepo) -> Unit)? = null
+    var favoriteButtonClickListener: ((GitHubRepo, Int) -> Unit)? = null
     var itemClickListener: ((GitHubRepo) -> Unit)? = null
 
     class GitHubRepoListViewHolder(
@@ -20,18 +20,19 @@ class GitHubRepoAdapter : ListAdapter<GitHubRepo, GitHubRepoAdapter.GitHubRepoLi
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(
             gitHubRepo: GitHubRepo,
-            favoriteButtonClickListener: ((GitHubRepo) -> Unit)?,
-            itemClickListener: ((GitHubRepo) -> Unit)?
+            favoriteButtonClickListener: ((GitHubRepo, Int) -> Unit)?,
+            itemClickListener: ((GitHubRepo) -> Unit)?,
+            position: Int
         ) {
             binding.apply {
 
-                this.gitHubRepo = gitHubRepo
+                this.item = gitHubRepo
                 itemLayout.setOnClickListener {
                     itemClickListener?.invoke(gitHubRepo)
                 }
 
                 btnFavorite.setOnClickListener {
-                    favoriteButtonClickListener?.invoke(gitHubRepo)
+                    favoriteButtonClickListener?.invoke(gitHubRepo, position)
                 }
             }
         }
@@ -43,7 +44,7 @@ class GitHubRepoAdapter : ListAdapter<GitHubRepo, GitHubRepoAdapter.GitHubRepoLi
     }
 
     override fun onBindViewHolder(holder: GitHubRepoListViewHolder, position: Int) {
-        holder.bind(getItem(position), favoriteButtonClickListener, itemClickListener)
+        holder.bind(getItem(position), favoriteButtonClickListener, itemClickListener, position)
     }
 }
 

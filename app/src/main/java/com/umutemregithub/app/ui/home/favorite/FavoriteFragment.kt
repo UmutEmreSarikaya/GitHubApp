@@ -1,4 +1,4 @@
-package com.umutemregithub.app.ui.favorite
+package com.umutemregithub.app.ui.home.favorite
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,8 +10,8 @@ import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.umutemregithub.app.R
-import com.umutemregithub.app.SharedViewModel
-import com.umutemregithub.app.ui.search.GitHubRepoAdapter
+import com.umutemregithub.app.ui.home.SharedViewModel
+import com.umutemregithub.app.ui.home.search.GitHubRepoAdapter
 import com.umutemregithub.app.databinding.FragmentFavoriteBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -42,7 +42,7 @@ class FavoriteFragment : Fragment() {
                 findNavController().navigate(action)
             }
 
-            gitHubRepoAdapter.favoriteButtonClickListener = {gitHubRepo ->
+            gitHubRepoAdapter.favoriteButtonClickListener = {gitHubRepo, position->
                 sharedViewModel.apply {
                 //viewModel.apply {
                     removeRepoFromFavorite(gitHubRepo)

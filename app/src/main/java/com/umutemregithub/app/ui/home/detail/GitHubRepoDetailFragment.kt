@@ -1,4 +1,4 @@
-package com.umutemregithub.app.ui.detail
+package com.umutemregithub.app.ui.home.detail
 
 import android.content.Intent
 import android.net.Uri

@@ -1,4 +1,4 @@
-package com.umutemregithub.app
+package com.umutemregithub.app.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,7 +6,9 @@ import com.umutemregithub.app.models.GitHubRepo
 import com.umutemregithub.app.repository.GitHubRepoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,13 +18,25 @@ class SharedViewModel @Inject constructor(
     private val gitHubRepoRepository: GitHubRepoRepository
 ): ViewModel() {
     private val _favoriteRepos = MutableSharedFlow<List<GitHubRepo>>(1)
-    val favoriteRepos: SharedFlow<List<GitHubRepo>> = _favoriteRepos
+    val favoriteRepos = _favoriteRepos.asSharedFlow()
 
     private val _searchedRepos = MutableSharedFlow<List<GitHubRepo>>(1)
-    val searchedRepos: SharedFlow<List<GitHubRepo>> = _searchedRepos
+    val searchedRepos = _searchedRepos.asSharedFlow()
 
     private val _isRepoNotFound = MutableSharedFlow<Boolean>(1)
-    val isRepoNotFound: SharedFlow<Boolean> = _isRepoNotFound
+    val isRepoNotFound = _isRepoNotFound.asSharedFlow()
+
+    private val _updateRow = MutableSharedFlow<Pair<GitHubRepo, Int>>()
+    val updateRow = _updateRow.asSharedFlow()
+
+    private val _searchedUsername = MutableStateFlow("")
+    val searchedUsername = _searchedUsername.asStateFlow()
+
+    private val _searchedUserRepoCount = MutableStateFlow("")
+    val searchedUserRepoCount = _searchedUserRepoCount.asStateFlow()
+
+    private val _searchedUserAvatarUrl = MutableStateFlow("")
+    val searchedUserAvatarUrl = _searchedUserAvatarUrl.asStateFlow()
 
     fun searchUsersRepos(username: String) {
         viewModelScope.launch {
@@ -30,15 +44,20 @@ class SharedViewModel @Inject constructor(
                 _isRepoNotFound.emit(true)
             }.collect {
                 it?.let {
+                    _searchedUserAvatarUrl.value = it[0].owner?.avatarUrl.toString()
+                    _searchedUsername.value = it[0].owner?.login.toString()
+                    _searchedUserRepoCount.value = it.size.toString()
                     _searchedRepos.emit(it)
                     _isRepoNotFound.emit(false)
                 }
             }
         }
     }
-    fun addOrRemoveRepoFromFavorite(gitHubRepo: GitHubRepo){
+    fun addOrRemoveRepoFromFavorite(gitHubRepo: GitHubRepo, position: Int){
         viewModelScope.launch {
-            gitHubRepoRepository.addOrRemoveRepoFromFavorite(gitHubRepo)
+            gitHubRepoRepository.addOrRemoveRepoFromFavorite(gitHubRepo).collect{
+                _updateRow.emit(Pair(gitHubRepo.apply { isFavorite = it }, position))
+            }
         }
     }
 

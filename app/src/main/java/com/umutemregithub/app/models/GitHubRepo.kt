@@ -16,5 +16,6 @@ data class GitHubRepo(
     @SerializedName("forks_count") val forksCount: Int? = null,
     @SerializedName("stargazers_count") val starsCount: Int? = null,
     val language: String? = null,
-    val owner: Owner? = null
+    val owner: Owner? = null,
+    var isFavorite: Boolean? = false
 ) : Parcelable

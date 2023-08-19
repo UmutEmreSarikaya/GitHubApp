@@ -1,6 +1,7 @@
 package com.umutemregithub.app.ui.home.search
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,9 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.umutemregithub.app.R
 import com.umutemregithub.app.ui.home.SharedViewModel
@@ -28,10 +31,7 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate<FragmentSearchBinding?>(
-            inflater,
-            R.layout.fragment_search,
-            container,
-            false
+            inflater, R.layout.fragment_search, container, false
         ).apply {
             viewModel = sharedViewModel
             lifecycleOwner = viewLifecycleOwner
@@ -56,72 +56,76 @@ class SearchFragment : Fragment() {
         }
 
 
-        initObservers()
-        /*if(sharedViewModel.searchedUsername.value != ""){
+        initObservers()/*if(sharedViewModel.searchedUsername.value != ""){
             sharedViewModel.searchUsersRepos(sharedViewModel.searchedUsername.value)
         }*/
         initClickListeners()
     }
 
     private fun initObservers() {
-        lifecycleScope.launch {
-            sharedViewModel.searchedRepos.collect {
-                //viewModel.repos.collect {
-                gitHubRepoAdapter.submitList(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.searchedRepos.collect {
+                    //viewModel.repos.collect {
+                    gitHubRepoAdapter.submitList(it)
+                }
             }
         }
 
-        lifecycleScope.launch {
-            sharedViewModel.isRepoNotFound.collect { isRepoNotFound ->
-                //viewModel.isRepoNotFound.collect { isRepoNotFound ->
-                if (isRepoNotFound) {
-                    binding.apply {
-                        cvUserInfo.gone()
-                        recyclerRepo.gone()
-                        tvUserNotFound.visible()
-                    }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.isRepoNotFound.collect { isRepoNotFound ->
+                    //viewModel.isRepoNotFound.collect { isRepoNotFound ->
+                    if (isRepoNotFound) {
+                        binding.apply {
+                            cvUserInfo.gone()
+                            recyclerRepo.gone()
+                            tvUserNotFound.visible()
+                        }
 
-                } else {
-                    binding.apply {
-                        cvUserInfo.visible()
-                        recyclerRepo.visible()
-                        tvUserNotFound.gone()
+                    } else {
+                        binding.apply {
+                            cvUserInfo.visible()
+                            recyclerRepo.visible()
+                            tvUserNotFound.gone()
+                        }
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.updateRow.collect {
+                    gitHubRepoAdapter.notifyItemChanged(it.second, it.first)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.isLoading.collect { isLoading ->
+                    if (isLoading) {
+                        binding.progressBar.visible()
+
+                    } else {
+                        binding.progressBar.gone()
                     }
                 }
             }
         }
 
         lifecycleScope.launch {
-            sharedViewModel.updateRow.collect {
-                gitHubRepoAdapter.notifyItemChanged(it.second, it.first)
-            }
-        }
-
-        lifecycleScope.launch {
-            sharedViewModel.isLoading.collect { isLoading ->
-                if (isLoading) {
-                    binding.progressBar.visible()
-
-                } else {
-                    binding.progressBar.gone()
-                }
-            }
-        }
-
-        /*lifecycleScope.launch {
-            sharedViewModel.changedItem.collect{repo->
+            sharedViewModel.changedItem.collect { repo ->
                 val filteredList = gitHubRepoAdapter.currentList.filter {
-                    it.id!= repo.id
+                    it.id != repo.id
                 }
                 val index = gitHubRepoAdapter.currentList.indexOf(repo)
-                withContext(Dispatchers.Main){
-                    gitHubRepoAdapter.notifyItemChanged(index, repo.apply { isFavorite = false })
-                    //gitHubRepoAdapter.submitList(null)
-                    gitHubRepoAdapter.notifyDataSetChanged()
-                    binding.recyclerRepo.adapter = gitHubRepoAdapter
-                }
+                gitHubRepoAdapter.notifyItemChanged(index, repo.apply { isFavorite = false })
+                gitHubRepoAdapter.submitList(null)
+                Log.d("myLog", "repo: $repo")
             }
-        }*/
+        }
     }
 
     private fun initClickListeners() {

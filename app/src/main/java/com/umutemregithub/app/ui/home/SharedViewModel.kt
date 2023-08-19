@@ -20,8 +20,8 @@ class SharedViewModel @Inject constructor(
     private val _favoriteRepos = MutableSharedFlow<List<GitHubRepo>>(1)
     val favoriteRepos = _favoriteRepos.asSharedFlow()
 
-    private val _searchedRepos = MutableSharedFlow<List<GitHubRepo>>(1)
-    val searchedRepos = _searchedRepos.asSharedFlow()
+    private val _searchedRepos = MutableStateFlow<List<GitHubRepo>>(emptyList())
+    val searchedRepos = _searchedRepos.asStateFlow()
 
     private val _isRepoNotFound = MutableSharedFlow<Boolean>(1)
     val isRepoNotFound = _isRepoNotFound.asSharedFlow()
@@ -54,7 +54,7 @@ class SharedViewModel @Inject constructor(
                     _searchedUserAvatarUrl.value = it[0].owner?.avatarUrl.toString()
                     _searchedUsername.value = it[0].owner?.login.toString()
                     _searchedUserRepoCount.value = it.size.toString()
-                    _searchedRepos.emit(it)
+                    _searchedRepos.value = it
                     _isRepoNotFound.emit(false)
                 }
             }
@@ -79,7 +79,7 @@ class SharedViewModel @Inject constructor(
     fun removeRepoFromFavorite(gitHubRepo: GitHubRepo) {
         viewModelScope.launch {
             gitHubRepoRepository.removeRepoFromFavorite(gitHubRepo)
-            //_changedItem.emit(gitHubRepo)
+            _changedItem.emit(gitHubRepo)
             collectFavoriteRepos()
         }
     }

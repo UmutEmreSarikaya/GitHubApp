@@ -27,32 +27,39 @@ class SearchFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)
+        binding = DataBindingUtil.inflate<FragmentSearchBinding?>(
+            inflater,
+            R.layout.fragment_search,
+            container,
+            false
+        ).apply {
+            viewModel = sharedViewModel
+            lifecycleOwner = viewLifecycleOwner
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.apply {
-            viewModel = sharedViewModel
-            lifecycleOwner = viewLifecycleOwner
+        binding.recyclerRepo.adapter = gitHubRepoAdapter.apply {
+            itemClickListener = {
+                val action =
+                    SearchFragmentDirections.actionSearchFragmentToGitHubRepoDetailFragment(it)
+                findNavController().navigate(action)
+            }
 
-            recyclerRepo.adapter = gitHubRepoAdapter.apply {
-                itemClickListener = {
-                    val action =
-                        SearchFragmentDirections.actionSearchFragmentToGitHubRepoDetailFragment(it)
-                    findNavController().navigate(action)
-                }
-
-                favoriteButtonClickListener = { gitHubRepo, position ->
-                    //viewModel.addOrRemoveRepoFromFavorite(gitHubRepo)
-                    sharedViewModel.addOrRemoveRepoFromFavorite(gitHubRepo, position)
-                }
+            favoriteButtonClickListener = { gitHubRepo, position ->
+                //viewModel.addOrRemoveRepoFromFavorite(gitHubRepo)
+                sharedViewModel.addOrRemoveRepoFromFavorite(gitHubRepo, position)
             }
         }
 
+
         initObservers()
+        /*if(sharedViewModel.searchedUsername.value != ""){
+            sharedViewModel.searchUsersRepos(sharedViewModel.searchedUsername.value)
+        }*/
         initClickListeners()
     }
 
@@ -73,6 +80,7 @@ class SearchFragment : Fragment() {
                         recyclerRepo.gone()
                         tvUserNotFound.visible()
                     }
+
                 } else {
                     binding.apply {
                         cvUserInfo.visible()
@@ -88,6 +96,32 @@ class SearchFragment : Fragment() {
                 gitHubRepoAdapter.notifyItemChanged(it.second, it.first)
             }
         }
+
+        lifecycleScope.launch {
+            sharedViewModel.isLoading.collect { isLoading ->
+                if (isLoading) {
+                    binding.progressBar.visible()
+
+                } else {
+                    binding.progressBar.gone()
+                }
+            }
+        }
+
+        /*lifecycleScope.launch {
+            sharedViewModel.changedItem.collect{repo->
+                val filteredList = gitHubRepoAdapter.currentList.filter {
+                    it.id!= repo.id
+                }
+                val index = gitHubRepoAdapter.currentList.indexOf(repo)
+                withContext(Dispatchers.Main){
+                    gitHubRepoAdapter.notifyItemChanged(index, repo.apply { isFavorite = false })
+                    //gitHubRepoAdapter.submitList(null)
+                    gitHubRepoAdapter.notifyDataSetChanged()
+                    binding.recyclerRepo.adapter = gitHubRepoAdapter
+                }
+            }
+        }*/
     }
 
     private fun initClickListeners() {

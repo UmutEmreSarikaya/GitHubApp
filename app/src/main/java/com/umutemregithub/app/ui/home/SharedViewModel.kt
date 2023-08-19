@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SharedViewModel @Inject constructor(
     private val gitHubRepoRepository: GitHubRepoRepository
-): ViewModel() {
+) : ViewModel() {
     private val _favoriteRepos = MutableSharedFlow<List<GitHubRepo>>(1)
     val favoriteRepos = _favoriteRepos.asSharedFlow()
 
@@ -38,7 +38,14 @@ class SharedViewModel @Inject constructor(
     private val _searchedUserAvatarUrl = MutableStateFlow("")
     val searchedUserAvatarUrl = _searchedUserAvatarUrl.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
+    private val _changedItem = MutableSharedFlow<GitHubRepo>()
+    val changedItem = _changedItem.asSharedFlow()
+
     fun searchUsersRepos(username: String) {
+        _isLoading.value = true
         viewModelScope.launch {
             gitHubRepoRepository.getUsersRepos(username).catch {
                 _isRepoNotFound.emit(true)
@@ -51,11 +58,13 @@ class SharedViewModel @Inject constructor(
                     _isRepoNotFound.emit(false)
                 }
             }
+            _isLoading.value = false
         }
     }
-    fun addOrRemoveRepoFromFavorite(gitHubRepo: GitHubRepo, position: Int){
+
+    fun addOrRemoveRepoFromFavorite(gitHubRepo: GitHubRepo, position: Int) {
         viewModelScope.launch {
-            gitHubRepoRepository.addOrRemoveRepoFromFavorite(gitHubRepo).collect{
+            gitHubRepoRepository.addOrRemoveRepoFromFavorite(gitHubRepo).collect {
                 _updateRow.emit(Pair(gitHubRepo.apply { isFavorite = it }, position))
             }
         }
@@ -70,11 +79,12 @@ class SharedViewModel @Inject constructor(
     fun removeRepoFromFavorite(gitHubRepo: GitHubRepo) {
         viewModelScope.launch {
             gitHubRepoRepository.removeRepoFromFavorite(gitHubRepo)
+            //_changedItem.emit(gitHubRepo)
             collectFavoriteRepos()
         }
     }
 
-    private suspend fun collectFavoriteRepos(){
+    private suspend fun collectFavoriteRepos() {
         gitHubRepoRepository.getFavoriteRepos().collect {
             it?.let {
                 _favoriteRepos.emit(it)

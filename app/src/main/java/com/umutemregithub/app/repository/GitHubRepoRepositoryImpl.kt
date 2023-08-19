@@ -12,29 +12,41 @@ class GitHubRepoRepositoryImpl @Inject constructor(
 ) : GitHubRepoRepository {
     override fun getUsersRepos(username: String): Flow<List<GitHubRepo>?> {
         return flow {
-            val favoriteRepos = gitHubRepoDao.getAll()
+            //val favoriteRepos = gitHubRepoDao.getAll()
             val response = gitHubRepoService.getUsersRepos(username)
-            if (response != null) {
-                response.forEach{ repo ->
+            if (response != null) {/*response.forEach { repo ->
                     val result = favoriteRepos?.contains(repo)
+                    Log.d("myLog", "result repo " + repo.name + ": " + result.toString() + "\n")
                     repo.isFavorite = result
+                }*/
+                /*response.forEach{ repo ->
+                    favoriteRepos?.forEach{favoriteRepo ->
+                        if(repo.id == favoriteRepo.id){
+                            repo.isFavorite = true
+                        }
+                    }
+                }*/
+                response.forEach { repo ->
+                    if (gitHubRepoDao.getItemById(repo.id) != null) {
+                        repo.isFavorite = true
+                    }
                 }
                 emit(response)
             }
         }
     }
 
-    override suspend fun addRepoAsFavorite(gitHubRepo: GitHubRepo) {
+    /*override suspend fun addRepoAsFavorite(gitHubRepo: GitHubRepo) {
         gitHubRepoDao.insert(gitHubRepo)
-    }
+    }*/
 
     override suspend fun removeRepoFromFavorite(gitHubRepo: GitHubRepo) {
         gitHubRepoDao.delete(gitHubRepo)
     }
 
-    override suspend fun addOrRemoveRepoFromFavorite(gitHubRepo: GitHubRepo): Flow<Boolean> {
+    override fun addOrRemoveRepoFromFavorite(gitHubRepo: GitHubRepo): Flow<Boolean> {
         return flow {
-            if(gitHubRepoDao.getItemById(gitHubRepo.id) != null){
+            if (gitHubRepoDao.getItemById(gitHubRepo.id) != null) {
                 emit(false)
                 gitHubRepoDao.delete(gitHubRepo)
             } else {

@@ -31,6 +31,7 @@ class FavoriteFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_favorite, container, false)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -38,16 +39,13 @@ class FavoriteFragment : Fragment() {
 
         binding.recyclerFavorite.adapter = gitHubRepoAdapter.apply {
             itemClickListener = {
-                val action = FavoriteFragmentDirections.actionFavoriteFragmentToGitHubRepoDetailFragment(it)
+                val action =
+                    FavoriteFragmentDirections.actionFavoriteFragmentToGitHubRepoDetailFragment(it)
                 findNavController().navigate(action)
             }
 
-            gitHubRepoAdapter.favoriteButtonClickListener = {gitHubRepo, position->
-                sharedViewModel.apply {
-                //viewModel.apply {
-                    removeRepoFromFavorite(gitHubRepo)
-                    //getFavoriteRepos()
-                }
+            gitHubRepoAdapter.favoriteButtonClickListener = { gitHubRepo, _ ->
+                sharedViewModel.removeRepoFromFavorite(gitHubRepo)
             }
         }
 
@@ -56,10 +54,10 @@ class FavoriteFragment : Fragment() {
 
     }
 
-    private fun initObservers(){
+    private fun initObservers() {
         lifecycleScope.launch {
             sharedViewModel.favoriteRepos.collect {
-            //viewModel.favoriteRepos.collect {
+                //viewModel.favoriteRepos.collect {
                 gitHubRepoAdapter.submitList(it)
             }
         }

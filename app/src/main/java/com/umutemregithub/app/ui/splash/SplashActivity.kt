@@ -1,4 +1,4 @@
-package com.umutemregithub.app.ui
+package com.umutemregithub.app.ui.splash
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity

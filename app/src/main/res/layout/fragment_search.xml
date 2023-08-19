@@ -33,8 +33,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             app:cardCornerRadius="20dp"
-            android:visibility="gone"
             app:cardElevation="5dp"
+            android:visibility="gone"
             app:cardUseCompatPadding="true"
             app:layout_constraintTop_toBottomOf="@+id/sv_username">
 
@@ -42,11 +42,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/iv_user"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    app:shapeAppearanceOverlay="@style/roundedImageView"
                     android:layout_marginTop="20dp"
+                    android:layout_marginEnd="5dp"
                     app:layout_constraintEnd_toStartOf="@+id/tv_username"
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
@@ -58,6 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
+                    android:layout_marginStart="5dp"
                     android:text="@{viewModel.searchedUsername}"
                     android:textColor="@color/black"
                     android:textSize="36sp"
@@ -77,6 +80,19 @@
                     app:layout_constraintTop_toBottomOf="@+id/iv_user" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:progressTint="@color/black"
+            android:indeterminateTint="@color/black"
+            android:textSize="28sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sv_username" />
 
         <TextView
             android:id="@+id/tv_user_not_found"

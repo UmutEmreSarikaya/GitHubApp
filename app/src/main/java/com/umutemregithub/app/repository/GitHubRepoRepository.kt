@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface GitHubRepoRepository {
     fun getUsersRepos(username: String): Flow<List<GitHubRepo>?>
-    suspend fun addRepoAsFavorite(gitHubRepo: GitHubRepo)
+    //suspend fun addRepoAsFavorite(gitHubRepo: GitHubRepo)
     suspend fun removeRepoFromFavorite(gitHubRepo: GitHubRepo)
-    suspend fun addOrRemoveRepoFromFavorite(gitHubRepo: GitHubRepo): Flow<Boolean>
+    fun addOrRemoveRepoFromFavorite(gitHubRepo: GitHubRepo): Flow<Boolean>
     fun getFavoriteRepos(): Flow<List<GitHubRepo>?>
 }

@@ -122,7 +122,6 @@ class SearchFragment : Fragment() {
                 }
                 val index = gitHubRepoAdapter.currentList.indexOf(repo)
                 gitHubRepoAdapter.notifyItemChanged(index, repo.apply { isFavorite = false })
-                gitHubRepoAdapter.submitList(null)
                 Log.d("myLog", "repo: $repo")
             }
         }

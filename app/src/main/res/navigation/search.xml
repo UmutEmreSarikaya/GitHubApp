@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search"
+    app:startDestination="@id/search_fragment">
+
+    <fragment
+        android:id="@+id/search_fragment"
+        android:name="com.umutemregithub.app.ui.home.search.SearchFragment"
+        android:label="Search"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_search_fragment_to_git_hub_repo_detail_fragment"
+            app:destination="@id/git_hub_repo_detail_fragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/git_hub_repo_detail_fragment"
+        android:name="com.umutemregithub.app.ui.home.detail.GitHubRepoDetailFragment"
+        android:label="Detail"
+        tools:layout="@layout/fragment_git_hub_repo_detail">
+        <action
+            android:id="@+id/action_git_hub_repo_detail_fragment_to_search_fragment"
+            app:destination="@id/search_fragment" />
+
+        <argument
+            android:name="gitHubRepo"
+            app:argType="com.umutemregithub.app.models.GitHubRepo" />
+    </dialog>
+</navigation>

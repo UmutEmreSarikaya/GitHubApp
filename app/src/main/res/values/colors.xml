@@ -4,4 +4,20 @@
     <color name="white">#FFFFFFFF</color>
     <color name="green">#FF5C9817</color>
     <color name="gray">#EDE9E9</color>
+    <color name="java_color">#AC6B0D</color>
+    <color name="kotlin_color">#7547C6</color>
+    <color name="c_color">#A7C9E4</color>
+    <color name="cpp_color">#E91E63</color>
+    <color name="c_sharp_color">#137017</color>
+    <color name="javascript_color">#F1D366</color>
+    <color name="html_color">#FB050D</color>
+    <color name="makefile_color">#2FAE33</color>v
+    <color name="dart_color">#00BCD4</color>
+    <color name="python_color">#3F51B5</color>
+    <color name="swift_color">#FF5722</color>
+    <color name="rust_color">#B51212</color>
+    <color name="r_color">#2196F3</color>
+    <color name="crystal_color">#06FFEA</color>
+    <color name="type_script_color">#CED868</color>
+    <color name="go_color">#7D9DB6</color>
 </resources>

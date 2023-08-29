@@ -13,6 +13,7 @@ import com.umutemregithub.app.R
 import com.umutemregithub.app.ui.home.SharedViewModel
 import com.umutemregithub.app.ui.home.search.GitHubRepoAdapter
 import com.umutemregithub.app.databinding.FragmentFavoriteBinding
+import com.umutemregithub.app.ui.home.search.SearchUIState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -46,6 +47,7 @@ class FavoriteFragment : Fragment() {
 
             gitHubRepoAdapter.favoriteButtonClickListener = { gitHubRepo, _ ->
                 sharedViewModel.removeRepoFromFavorite(gitHubRepo)
+                sharedViewModel.setUIState(SearchUIState.Loading)
             }
         }
 

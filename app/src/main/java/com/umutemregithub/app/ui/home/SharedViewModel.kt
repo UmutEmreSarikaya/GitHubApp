@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.umutemregithub.app.models.GitHubRepo
 import com.umutemregithub.app.repository.GitHubRepoRepository
+import com.umutemregithub.app.ui.home.search.SearchUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,14 +36,17 @@ class SharedViewModel @Inject constructor(
     private val _searchedUserRepoCount = MutableStateFlow("")
     val searchedUserRepoCount = _searchedUserRepoCount.asStateFlow()
 
+    private val _searchedUserProfileUrl = MutableStateFlow("")
+    val searchedUserProfileUrl = _searchedUserProfileUrl.asStateFlow()
+
     private val _searchedUserAvatarUrl = MutableStateFlow("")
     val searchedUserAvatarUrl = _searchedUserAvatarUrl.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
-    private val _changedItem = MutableSharedFlow<GitHubRepo>()
-    val changedItem = _changedItem.asSharedFlow()
+    private val _uiState = MutableSharedFlow<SearchUIState>(1)
+    val uiState = _uiState.asSharedFlow()
 
     fun searchUsersRepos(username: String) {
         _isLoading.value = true
@@ -51,14 +55,20 @@ class SharedViewModel @Inject constructor(
                 _isRepoNotFound.emit(true)
             }.collect {
                 it?.let {
-                    _searchedUserAvatarUrl.value = it[0].owner?.avatarUrl.toString()
-                    _searchedUsername.value = it[0].owner?.login.toString()
-                    _searchedUserRepoCount.value = it.size.toString()
+                    if (it.isEmpty()){
+                        _searchedUsername.emit(username)
+                    } else {
+                        _searchedUserProfileUrl.emit(it[0].owner?.profileUrl.toString())
+                        _searchedUserAvatarUrl.emit(it[0].owner?.avatarUrl.toString())
+                        _searchedUsername.emit(it[0].owner?.login.toString())
+                    }
+                    _searchedUserRepoCount.emit(it.size.toString())
                     _searchedRepos.emit(it)
                     _isRepoNotFound.emit(false)
                 }
             }
             _isLoading.value = false
+            _uiState.emit(SearchUIState.Loaded)
         }
     }
 
@@ -79,7 +89,6 @@ class SharedViewModel @Inject constructor(
     fun removeRepoFromFavorite(gitHubRepo: GitHubRepo) {
         viewModelScope.launch {
             gitHubRepoRepository.removeRepoFromFavorite(gitHubRepo)
-            _changedItem.emit(gitHubRepo)
             collectFavoriteRepos()
         }
     }
@@ -89,6 +98,12 @@ class SharedViewModel @Inject constructor(
             it?.let {
                 _favoriteRepos.emit(it)
             }
+        }
+    }
+
+    fun setUIState(state: SearchUIState){
+        viewModelScope.launch {
+            _uiState.emit(state)
         }
     }
 }

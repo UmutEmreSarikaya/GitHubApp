@@ -1,8 +1,8 @@
 package com.umutemregithub.app.ui.home.search
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,19 +14,21 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.umutemregithub.app.R
-import com.umutemregithub.app.ui.home.SharedViewModel
 import com.umutemregithub.app.databinding.FragmentSearchBinding
+import com.umutemregithub.app.ui.home.SharedViewModel
 import com.umutemregithub.app.util.gone
 import com.umutemregithub.app.util.visible
+import com.umutemregithub.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SearchFragment : Fragment() {
+class SearchFragment : BaseFragment() {
     //private val viewModel: SearchViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by hiltNavGraphViewModels(R.id.navigation_graph)
     private lateinit var binding: FragmentSearchBinding
     private val gitHubRepoAdapter = GitHubRepoAdapter()
+    private var profileUrl: String? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -54,15 +56,10 @@ class SearchFragment : Fragment() {
                 sharedViewModel.addOrRemoveRepoFromFavorite(gitHubRepo, position)
             }
         }
-
-
-        initObservers()/*if(sharedViewModel.searchedUsername.value != ""){
-            sharedViewModel.searchUsersRepos(sharedViewModel.searchedUsername.value)
-        }*/
-        initClickListeners()
     }
 
-    private fun initObservers() {
+    override fun initObservers() {
+        super.initObservers()
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 sharedViewModel.searchedRepos.collect {
@@ -78,14 +75,14 @@ class SearchFragment : Fragment() {
                     //viewModel.isRepoNotFound.collect { isRepoNotFound ->
                     if (isRepoNotFound) {
                         binding.apply {
-                            cvUserInfo.gone()
+                            profileView.gone()
                             recyclerRepo.gone()
                             tvUserNotFound.visible()
                         }
 
                     } else {
                         binding.apply {
-                            cvUserInfo.visible()
+                            profileView.visible()
                             recyclerRepo.visible()
                             tvUserNotFound.gone()
                         }
@@ -115,19 +112,82 @@ class SearchFragment : Fragment() {
             }
         }
 
-        lifecycleScope.launch {
+        /*lifecycleScope.launch {
             sharedViewModel.changedItem.collect { repo ->
-                val filteredList = gitHubRepoAdapter.currentList.filter {
-                    it.id != repo.id
-                }
-                val index = gitHubRepoAdapter.currentList.indexOf(repo)
-                gitHubRepoAdapter.notifyItemChanged(index, repo.apply { isFavorite = false })
+                val indexOfRepo = gitHubRepoAdapter.currentList.indexOf(repo)
                 Log.d("myLog", "repo: $repo")
+                Log.d("myLog", "index: $indexOfRepo")
+                if (indexOfRepo != -1) {
+                    val updatedList = gitHubRepoAdapter.currentList.toMutableList()
+                    updatedList[indexOfRepo] = repo.apply { isFavorite = false }
+                    gitHubRepoAdapter.submitList(updatedList)
+                    //gitHubRepoAdapter.notifyItemChanged(index, repo.apply { isFavorite = false })
+                }
+            }
+        }*/
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.uiState.collect {
+                    when (it) {
+                        SearchUIState.Loading -> {
+                            if (sharedViewModel.searchedUsername.value != "") {
+                                sharedViewModel.searchUsersRepos(sharedViewModel.searchedUsername.value)
+                            }
+                        }
+
+                        SearchUIState.Loaded -> {
+
+                        }
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.searchedUserAvatarUrl.collect {
+                    binding.profileView.setProfileUrl(it)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.searchedUsername.collect {
+                    binding.profileView.setUsernameText(it)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.searchedUserRepoCount.collect {
+                    binding.profileView.setRepoCountText(
+                        String.format(
+                            getString(R.string.repository_count_label),
+                            it
+                        )
+                    )
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sharedViewModel.searchedUserProfileUrl.collect {
+                    profileUrl = it
+                }
             }
         }
     }
 
-    private fun initClickListeners() {
+    override fun initClickListener() {
+        super.initClickListener()
+        binding.profileView.setProfileImageClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(profileUrl))
+            startActivity(intent)
+        }
 
         binding.svUsername.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             android.widget.SearchView.OnQueryTextListener {
@@ -143,7 +203,7 @@ class SearchFragment : Fragment() {
             override fun onQueryTextChange(p0: String?): Boolean {
                 if (p0 == "") {
                     binding.apply {
-                        cvUserInfo.gone()
+                        profileView.gone()
                         recyclerRepo.gone()
                         tvUserNotFound.gone()
                     }

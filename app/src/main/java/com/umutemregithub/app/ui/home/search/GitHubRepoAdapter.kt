@@ -34,6 +34,8 @@ class GitHubRepoAdapter : ListAdapter<GitHubRepo, GitHubRepoAdapter.GitHubRepoLi
                 btnFavorite.setOnClickListener {
                     favoriteButtonClickListener?.invoke(gitHubRepo, position)
                 }
+
+                languageView.setProfileView(gitHubRepo.language)
             }
         }
     }

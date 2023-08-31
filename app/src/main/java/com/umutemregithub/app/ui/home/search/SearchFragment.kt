@@ -3,11 +3,8 @@ package com.umutemregithub.app.ui.home.search
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.databinding.DataBindingUtil
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -23,26 +20,17 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SearchFragment : BaseFragment() {
+class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     //private val viewModel: SearchViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by hiltNavGraphViewModels(R.id.navigation_graph)
-    private lateinit var binding: FragmentSearchBinding
+    //private lateinit var binding: FragmentSearchBinding
+    override val layoutRes = R.layout.fragment_search
     private val gitHubRepoAdapter = GitHubRepoAdapter()
-    private var profileUrl: String? = null
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        binding = DataBindingUtil.inflate<FragmentSearchBinding?>(
-            inflater, R.layout.fragment_search, container, false
-        ).apply {
-            viewModel = sharedViewModel
-            lifecycleOwner = viewLifecycleOwner
-        }
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.viewModel = sharedViewModel
 
         binding.recyclerRepo.adapter = gitHubRepoAdapter.apply {
             itemClickListener = {
@@ -173,19 +161,19 @@ class SearchFragment : BaseFragment() {
             }
         }
 
-        lifecycleScope.launch {
+        /*lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 sharedViewModel.searchedUserProfileUrl.collect {
-                    profileUrl = it
+                    sharedViewModel.profileUrl = it
                 }
             }
-        }
+        }*/
     }
 
     override fun initClickListener() {
         super.initClickListener()
         binding.profileView.setProfileImageClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(profileUrl))
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(sharedViewModel.searchedUserProfileUrl))
             startActivity(intent)
         }
 

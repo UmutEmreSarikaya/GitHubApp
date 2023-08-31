@@ -36,8 +36,8 @@ class SharedViewModel @Inject constructor(
     private val _searchedUserRepoCount = MutableStateFlow("")
     val searchedUserRepoCount = _searchedUserRepoCount.asStateFlow()
 
-    private val _searchedUserProfileUrl = MutableStateFlow("")
-    val searchedUserProfileUrl = _searchedUserProfileUrl.asStateFlow()
+    /*private val _searchedUserProfileUrl = MutableStateFlow("")
+    val searchedUserProfileUrl = _searchedUserProfileUrl.asStateFlow()*/
 
     private val _searchedUserAvatarUrl = MutableStateFlow("")
     val searchedUserAvatarUrl = _searchedUserAvatarUrl.asStateFlow()
@@ -47,6 +47,8 @@ class SharedViewModel @Inject constructor(
 
     private val _uiState = MutableSharedFlow<SearchUIState>(1)
     val uiState = _uiState.asSharedFlow()
+
+    var searchedUserProfileUrl: String? = null
 
     fun searchUsersRepos(username: String) {
         _isLoading.value = true
@@ -58,7 +60,8 @@ class SharedViewModel @Inject constructor(
                     if (it.isEmpty()){
                         _searchedUsername.emit(username)
                     } else {
-                        _searchedUserProfileUrl.emit(it[0].owner?.profileUrl.toString())
+                        searchedUserProfileUrl = it[0].owner?.profileUrl.toString()
+                        //_searchedUserProfileUrl.emit(it[0].owner?.profileUrl.toString())
                         _searchedUserAvatarUrl.emit(it[0].owner?.avatarUrl.toString())
                         _searchedUsername.emit(it[0].owner?.login.toString())
                     }

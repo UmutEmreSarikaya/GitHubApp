@@ -1,0 +1,1 @@
+This project was done during my internship at Innovance Consultancy. During the internship, I learned about topics such as Hilt, Retrofit, Data Binding, Custom Views , Flows, Multi-Module Apps, Shared View Models, OkHttp, Navigation Component, Glide, MVVM architecture and Shared Preferences.
